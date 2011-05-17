@@ -19,6 +19,8 @@ class Sitemaps
         $CI =& get_instance();
         
         $CI->config->load('sitemaps');
+
+	log_message('debug', "Sitemaps Class Initialized");
     }
 
     /**
