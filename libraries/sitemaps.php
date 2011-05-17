@@ -10,8 +10,6 @@
  */
 class Sitemaps
 {
-    //var $items = array();
-    //old php4
     private $items = array();
 
     function Sitemaps()
