@@ -53,9 +53,6 @@ class Sitemaps
      */
     function build($file_name = null, $gzip = NULL)
     {
-        //$CI =& get_instance();
-        //no need to initiate twice
-
         $map = $CI->config->item('sitemaps_header') . "\n";
 
         foreach($this->items as $item)
@@ -124,8 +121,6 @@ class Sitemaps
      */
     function build_index($urls, $file_name = null, $gzip = null)
     {
-        //$CI =& get_instance();
-        //again no need to re-initiate
 
         $index = $CI->config->item('sitemaps_index_header') . "\n";
 
@@ -187,8 +182,6 @@ class Sitemaps
      */
     function ping($url_xml, $search_engines = NULL)
     {
-        //$CI =& get_instance();
-        //this is getting me tired...
 
         if(is_null($search_engines))
         {
