@@ -3,14 +3,16 @@
 /**
  * A class for generating XML sitemaps
  *
- * @author Philipp Dörner <pd@signalkraft.com>
+ * @author Philipp Dörner <pd@signalkraft.com>,improvements by Sadaoui "SAFAD" Abderrahim <SAFAD.Line@gmail.com>
  * @version 0.7
  * @access public
  * @package sitemaps
  */
 class Sitemaps
 {
-    var $items = array();
+    //var $items = array();
+    //old php4
+    private $items = array();
 
     function Sitemaps()
     {
@@ -51,7 +53,9 @@ class Sitemaps
      */
     function build($file_name = null, $gzip = NULL)
     {
-        $CI =& get_instance();
+        //$CI =& get_instance();
+        //no need to initiate twice
+
         $map = $CI->config->item('sitemaps_header') . "\n";
 
         foreach($this->items as $item)
@@ -120,7 +124,9 @@ class Sitemaps
      */
     function build_index($urls, $file_name = null, $gzip = null)
     {
-        $CI =& get_instance();
+        //$CI =& get_instance();
+        //again no need to re-initiate
+
         $index = $CI->config->item('sitemaps_index_header') . "\n";
 
         foreach($urls as $url)
@@ -181,7 +187,8 @@ class Sitemaps
      */
     function ping($url_xml, $search_engines = NULL)
     {
-        $CI =& get_instance();
+        //$CI =& get_instance();
+        //this is getting me tired...
 
         if(is_null($search_engines))
         {
