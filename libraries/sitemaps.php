@@ -3,7 +3,9 @@
 /**
  * A class for generating XML sitemaps
  *
- * @author Philipp Dörner <pd@signalkraft.com>,improvements by Sadaoui "SAFAD" Abderrahim <SAFAD.Line@gmail.com>
+ * @author Philipp Dörner <pd@signalkraft.com>
+ * @author Oliver Smith <chemicaloli@gmail.com>
+ * @author Sadaoui "SAFAD" Abderrahim <SAFAD.Line@gmail.com>
  * @version 0.7
  * @access public
  * @package sitemaps
@@ -12,7 +14,7 @@ class Sitemaps
 {
     private $items = array();
 
-    function Sitemaps()
+    function __construct()
     {
         $CI =& get_instance();
         
@@ -237,3 +239,4 @@ class Sitemaps
         return $statuses;
     }
 }
+
