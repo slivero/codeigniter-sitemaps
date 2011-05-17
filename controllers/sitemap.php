@@ -5,12 +5,14 @@ class Sitemap extends CI_Controller
 	function Sitemap()
 	{
 		parent::__construct();
+		//always load what you need in the construct function, this will make it easier to use functions everywhere in this controller unless you don't want it to be like this, thus i see no purpose for that
+		$this->load->model('posts_model');
+		$this->load->library('sitemaps');
 	}
 	
 	function index()
 	{
-		$this->load->model('posts_model');
-		$this->load->library('sitemaps');
+		
 		
 		$posts = $this->posts_model->get_posts();
 		
