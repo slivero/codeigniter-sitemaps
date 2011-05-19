@@ -13,12 +13,13 @@
 class Sitemaps
 {
     private $items = array();
+    private $CI;
 
     function __construct()
     {
-        $CI =& get_instance();
+        $this->CI =& get_instance();
         
-        $CI->config->load('sitemaps');
+        $this->CI->config->load('sitemaps');
     }
 
     /**
@@ -53,7 +54,7 @@ class Sitemaps
      */
     function build($file_name = null, $gzip = NULL)
     {
-        $map = $CI->config->item('sitemaps_header') . "\n";
+        $map = $this->CI->config->item('sitemaps_header') . "\n";
 
         foreach($this->items as $item)
         {
@@ -75,7 +76,7 @@ class Sitemaps
 
         unset($this->items);
 
-        $map .= $CI->config->item('sitemaps_footer');
+        $map .= $this->CI->config->item('sitemaps_footer');
 
         if( ! is_null($file_name))
         {
@@ -83,15 +84,15 @@ class Sitemaps
             fwrite($fh, $map);
             fclose($fh);
 
-            if($CI->config->item('sitemaps_filesize_error') && filesize($file_name) > 1024 * 1024 * 10)
+            if($this->CI->config->item('sitemaps_filesize_error') && filesize($file_name) > 1024 * 1024 * 10)
             {
                 show_error('Your sitemap is bigger than 10MB, most search engines will not accept it.');
             }
 
-            if($gzip OR (is_null($gzip) && $CI->config->item('sitemaps_gzip')))
+            if($gzip OR (is_null($gzip) && $this->CI->config->item('sitemaps_gzip')))
             {
                 $gzdata = gzencode($map, 9);
-                $file_gzip = str_replace("{file_name}", $file_name, $CI->config->item('sitemaps_gzip_path'));
+                $file_gzip = str_replace("{file_name}", $file_name, $this->CI->config->item('sitemaps_gzip_path'));
                 $fp = fopen($file_gzip, "w");
                 fwrite($fp, $gzdata);
                 fclose($fp);
@@ -122,7 +123,7 @@ class Sitemaps
     function build_index($urls, $file_name = null, $gzip = null)
     {
 
-        $index = $CI->config->item('sitemaps_index_header') . "\n";
+        $index = $this->CI->config->item('sitemaps_index_header') . "\n";
 
         foreach($urls as $url)
         {
@@ -137,7 +138,7 @@ class Sitemaps
             $index .= "\t</sitemap>\n\n";
         }
 
-        $index .= $CI->config->item('sitemaps_index_footer');
+        $index .= $this->CI->config->item('sitemaps_index_footer');
 
         if( ! is_null($file_name))
         {
@@ -145,15 +146,15 @@ class Sitemaps
             fwrite($fh, $index);
             fclose($fh);
 
-            if($CI->config->item('sitemaps_filesize_error') && filesize($file_name) > 1024 * 1024 * 10)
+            if($this->CI->config->item('sitemaps_filesize_error') && filesize($file_name) > 1024 * 1024 * 10)
             {
                 show_error('Your sitemap index is bigger than 10MB, most search engines will not accept it.');
             }
 
-            if($gzip OR (is_null($gzip) && $CI->config->item('sitemaps_index_gzip')))
+            if($gzip OR (is_null($gzip) && $this->CI->config->item('sitemaps_index_gzip')))
             {
                 $gzdata = gzencode($index, 9);
-                $file_gzip = str_replace("{file_name}", $file_name, $CI->config->item('sitemaps_index_gzip_path'));
+                $file_gzip = str_replace("{file_name}", $file_name, $this->CI->config->item('sitemaps_index_gzip_path'));
                 $fp = fopen($file_gzip, "w");
                 fwrite($fp, $gzdata);
                 fclose($fp);
@@ -185,7 +186,7 @@ class Sitemaps
 
         if(is_null($search_engines))
         {
-            $search_engines = $CI->config->item('sitemaps_search_engines');
+            $search_engines = $this->CI->config->item('sitemaps_search_engines');
         }
 
         $statuses = array();
@@ -200,7 +201,7 @@ class Sitemaps
                 $req =  'GET ' . $engine['url'] .
                         urlencode($url_xml) . " HTTP/1.1\r\n" .
                         "Host: " . $engine['host'] . "\r\n" .
-                        $CI->config->item('sitemaps_user_agent') .
+                        $this->CI->config->item('sitemaps_user_agent') .
                         "Connection: Close\r\n\r\n";
                 fwrite($fp, $req);
                 while( ! feof($fp))
@@ -217,19 +218,19 @@ class Sitemaps
             $statuses[] = array("host" => $engine['host'], "status" => $status, "request" => $req);
         }
 
-        if($CI->config->item('sitemaps_log_http_responses') OR $CI->config->item('sitemaps_debug'))
+        if($this->CI->config->item('sitemaps_log_http_responses') OR $this->CI->config->item('sitemaps_debug'))
         {
             foreach($statuses AS $reponse)
             {
                 $message = "Sitemaps: " . $reponse['host'] . " responded with HTTP status " . $reponse['status'];
 
-                if($CI->config->item('sitemaps_log_http_responses'))
+                if($this->CI->config->item('sitemaps_log_http_responses'))
                 {
                     $level = $reponse['status'] == 200 ? 'debug' : 'error';
                     log_message($level, $message);
                 }
 
-                if($CI->config->item('sitemaps_debug'))
+                if($this->CI->config->item('sitemaps_debug'))
                 {
                     echo "<p>" . $message . " after request:</p>\n<pre>" . $reponse['request'] .  "</pre>\n\n";
                 }
@@ -239,4 +240,3 @@ class Sitemaps
         return $statuses;
     }
 }
-
