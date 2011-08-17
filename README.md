@@ -8,7 +8,7 @@ This library is only compatible with Codeigniter 2.0+ as it uses syntax incompat
 ### Installation
 Put the contents of this archive in your system/application folder.
 
-An example controller is included in controllers/sitemap.php. It generates the sitemap for a blog using s hyperthetical model to provide a list of the post urls.
+An example controller is included in controllers/sitemap.php. It generates the sitemap for a blog using a hyperthetical model to provide a list of the post urls.
 
 ### Thanks
 This library is based on work by Philipp Dörner 2010
