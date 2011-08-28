@@ -5,8 +5,8 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * A class for generating XML sitemaps
  *
- * @author Philipp Dörner <pd@signalkraft.com>
  * @author Oliver Smith <chemicaloli@gmail.com>
+ * @author Philipp Dörner <pd@signalkraft.com>
  * @author Sadaoui "SAFAD" Abderrahim <SAFAD.Line@gmail.com>
  * @version 0.8
  * @access public
@@ -17,10 +17,14 @@ class Sitemaps
 
     private $CI;
     private $items = array(); //array of webpages for sitemap
+    private $item_keys =array('loc', 'lastmod','changefreq','priority');
+    
     private $error_msg = array(); //errors
     private $ignore = array('Error'); //controllers not to auto probe
     private $excluded_methods = array('__construct', 'get_instance'); //method names not to include in autogeneration
 
+    
+    
     function __construct()
     {
         $this->CI = & get_instance();
@@ -34,9 +38,21 @@ class Sitemaps
      * @param array $new_item
      * @access public
      */
-    function add_item($new_item)
+    function add_item($new_item = array())
     {
-        $this->items[] = $new_item;
+        //check that all the required keys are present
+        foreach($this->item_keys as $key)
+        {
+            if(!array_key_exists($key, $new_item))
+            {
+                $this->set_error('Attempting to add page array with missing fields');
+                return FALSE;
+            }
+        }
+        
+	$this->items[] = $new_item;
+	
+	return TRUE;
     }
 
     /**
@@ -47,7 +63,26 @@ class Sitemaps
      */
     function add_item_array($new_items)
     {
+        //check there are some items to add
+	if(!count($new_items)>0)
+        {
+            $this->set_error('Attempting to add empty array of pages');
+            return FALSE;
+        }
+
+        //check that all the required keys are present
+	foreach($new_items as $items) 
+	{
+            if(!array_key_exists($key, $new_item))
+            {
+                $this->set_error('Attempting to add page array with missing fields');
+                return FALSE;
+            }
+	}
+        
         $this->items = array_merge($this->items, $new_items);
+        
+        return TRUE;
     }
 
     /**
@@ -66,6 +101,12 @@ class Sitemaps
 
         //get the filenames from the controller directory
         $files = get_filenames('application/controllers');
+        
+        if(count($files) < 1)
+        {
+            $this->set_error('No controller class files found for autodetection');
+            return FALSE;
+        }
 
         //add the exluded parameter to the existing ignored classes
         foreach ($excluded as $excluded_class)
@@ -89,6 +130,7 @@ class Sitemaps
             }
             catch (Exception $exc)
             {
+                $this->set_error('Failed to include '.$files[$index]);
                 continue;
             }
 
