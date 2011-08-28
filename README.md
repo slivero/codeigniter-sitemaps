@@ -1,6 +1,8 @@
 # Sitemaps for CodeIgniter
 
-codeigniter-sitemaps allows you to generate XML sitemaps for your codeigniter based applications quickly and easily. At present it does not feature auto crawling of the site you must provide a controller method to pull in a list of pages you wish to include. An example controller is included.
+codeigniter-sitemaps allows you to generate XML sitemaps for your codeigniter based applications quickly and easily. An example controller is included.
+
+Basic autodetection of pages is included using auto_detect() which assumes method == page and adds urls to the sitemap accordingly, this can be restricted using the exclude parameter.
 
 ### System Requirements
 This library is only compatible with Codeigniter 2.0+ as it uses syntax incompatible with PHP4. PHP5.3 is required for ISO 8601 date compatibility.
