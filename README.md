@@ -4,6 +4,8 @@ codeigniter-sitemaps allows you to generate XML sitemaps for your codeigniter ba
 
 Basic autodetection of pages is included using auto_detect() which assumes method == page and adds urls to the sitemap accordingly, this can be restricted using the exclude parameter.
 
+The directory you're writing the sitemap to must be writable.
+
 ## System Requirements
 
 * Codeigniter 2.0+
