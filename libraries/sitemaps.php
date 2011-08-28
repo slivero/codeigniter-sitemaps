@@ -1,24 +1,25 @@
 <?php
 
-if (!defined('BASEPATH'))
-    exit('No direct script access allowed');
+if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * A class for generating XML sitemaps
  *
- * @author Philipp D?rner <pd@signalkraft.com>
+ * @author Philipp Dörner <pd@signalkraft.com>
  * @author Oliver Smith <chemicaloli@gmail.com>
  * @author Sadaoui "SAFAD" Abderrahim <SAFAD.Line@gmail.com>
- * @version 0.7
+ * @version 0.8
  * @access public
  * @package sitemaps
  */
 class Sitemaps
 {
 
-    private $items = array();
-    private $error_msg = array();
     private $CI;
+    private $items = array(); //array of webpages for sitemap
+    private $error_msg = array(); //errors
+    private $ignore = array('Error'); //controllers not to auto probe
+    private $excluded_methods = array('__construct', 'get_instance'); //method names not to include in autogeneration
 
     function __construct()
     {
@@ -47,6 +48,69 @@ class Sitemaps
     function add_item_array($new_items)
     {
         $this->items = array_merge($this->items, $new_items);
+    }
+
+    /**
+     * Detects pages generated directly by CI controller 
+     * methods and adds them to the $this->items
+     * 
+     * Must be called from a class not being probed
+     * 
+     * @param array $exclude array of exluded classes
+     * @return bool 
+     */
+    function auto_detect($excluded = array('sitemap'))
+    {
+        $this->CI->load->helper('file');
+
+
+        //get the filenames from the controller directory
+        $files = get_filenames('application/controllers');
+
+        //add the exluded parameter to the existing ignored classes
+        foreach ($excluded as $excluded_class)
+        {
+            $this->ignore[] = ucfirst($excluded_class);
+        }
+
+        //loop through the files in the controller dir
+        for ($index = 0; $index < count($files); $index++)
+        {
+            //get the class names
+            list($class, $ext) = explode('.', ucfirst(basename($files[$index])));
+
+            //ignore all files that don't end .php
+            if ($ext != 'php' || in_array($class, $this->ignore)) continue;
+
+            //try to include the files
+            try
+            {
+                include('application/controllers/' . $files[$index]);
+            }
+            catch (Exception $exc)
+            {
+                continue;
+            }
+
+            //get the methods for the class (assuming method == page)
+            foreach (get_class_methods($class) as $page)
+            {
+                //ignore methods specified in he exclude
+                if (in_array($page, $this->excluded_methods)) continue;
+
+                //setup and add page to item list
+                $item = array(
+                    "loc" => site_url(lcfirst($class) . '/' . $page),
+                    "lastmod" => date("c", time()),
+                    "changefreq" => "hourly",
+                    "priority" => "0.8"
+                );
+
+                $this->add_item($item);
+            }
+        }
+
+        return TRUE;
     }
 
     /**
