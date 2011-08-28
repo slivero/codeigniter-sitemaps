@@ -14,35 +14,34 @@ Put the contents of this archive in your system/application folder.
 
 Or use sparks: 
 
-`php tools/spark install codeigniter-sitemaps`
+    php tools/spark install codeigniter-sitemaps
 
 ## Example Usage
 
-`
-//if you're using sparks
-$this->load->spark('codeigniter-sitemaps/0.0.1')
+    //if you're using sparks
+    $this->load->spark('codeigniter-sitemaps/0.0.1')
 
-$this->load->library('sitemaps');
+    $this->load->library('sitemaps');
 
-//assuming a hypothetical posts_model
-$posts = $this->posts_model->get_posts();
+    //assuming a hypothetical posts_model
+    $posts = $this->posts_model->get_posts();
 
-    foreach ($posts AS $post)
-    {
-        $item = array(
-            "loc" => site_url("blog/" . $post->slug),
-            "lastmod" => date("c", strtotime($post->last_modified)),
-            "changefreq" => "hourly",
-            "priority" => "0.8"
-        );
+        foreach ($posts AS $post)
+        {
+            $item = array(
+                "loc" => site_url("blog/" . $post->slug),
+                "lastmod" => date("c", strtotime($post->last_modified)),
+                "changefreq" => "hourly",
+                "priority" => "0.8"
+            );
 
-        $this->sitemaps->add_item($item);
-    }
+            $this->sitemaps->add_item($item);
+        }
 
-// file name may change due to compression
-$file_name = $this->sitemaps->build("sitemap_blog.xml");
+    // file name may change due to compression
+    $file_name = $this->sitemaps->build("sitemap_blog.xml");
 
-$reponses = $this->sitemaps->ping(site_url($file_name));`
+    $reponses = $this->sitemaps->ping(site_url($file_name));
 
 There is also autodetect functionality see code & comments for more details
 
