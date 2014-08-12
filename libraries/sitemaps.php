@@ -18,13 +18,13 @@ class Sitemaps
     private $CI;
     private $items = array(); //array of webpages for sitemap
     private $item_keys =array('loc', 'lastmod','changefreq','priority');
-    
+
     private $error_msg = array(); //errors
     private $ignore = array('Error'); //controllers not to auto probe
     private $excluded_methods = array('__construct', 'get_instance'); //method names not to include in autogeneration
 
-    
-    
+
+
     function __construct()
     {
         $this->CI = & get_instance();
@@ -49,9 +49,9 @@ class Sitemaps
                 return FALSE;
             }
         }
-        
+
 	$this->items[] = $new_item;
-	
+
 	return TRUE;
     }
 
@@ -64,35 +64,32 @@ class Sitemaps
     function add_item_array($new_items)
     {
         //check there are some items to add
-	if(!count($new_items)>0)
+    	if(!count($new_items)>0)
         {
             $this->set_error('Attempting to add empty array of pages');
             return FALSE;
         }
 
         //check that all the required keys are present
-	foreach($new_items as $items) 
-	{
-            if(!array_key_exists($key, $new_item))
+    	foreach($new_items as $new_item)
+    	{
+            if(!$this->add_item($new_item))
             {
-                $this->set_error('Attempting to add page array with missing fields');
                 return FALSE;
             }
-	}
-        
-        $this->items = array_merge($this->items, $new_items);
-        
+    	}
+
         return TRUE;
     }
 
     /**
-     * Detects pages generated directly by CI controller 
+     * Detects pages generated directly by CI controller
      * methods and adds them to the $this->items
-     * 
+     *
      * Must be called from a class not being probed
-     * 
+     *
      * @param array $exclude array of exluded classes
-     * @return bool 
+     * @return bool
      */
     function auto_detect($excluded = array('sitemap'))
     {
@@ -101,7 +98,7 @@ class Sitemaps
 
         //get the filenames from the controller directory
         $files = get_filenames('application/controllers');
-        
+
         if(count($files) < 1)
         {
             $this->set_error('No controller class files found for autodetection');
